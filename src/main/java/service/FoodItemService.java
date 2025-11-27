@@ -40,7 +40,7 @@ public class FoodItemService {
     // atualizar
     public FoodItem atualizar(Long id, FoodItem atualizacao) {
         Optional<FoodItem> atual = repository.findById(id);
-        if (atual.isPresent()) {
+       if (atual.isPresent()) {
             FoodItem atualOpt = atual.get();
             atualOpt.setNome(atualizacao.getNome());
             atualOpt.setQuantidade(atualizacao.getQuantidade());

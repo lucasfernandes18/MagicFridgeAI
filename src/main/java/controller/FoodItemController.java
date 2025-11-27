@@ -16,7 +16,7 @@ public class FoodItemController {
 
     private FoodItemService foodItemService;
 
-    @GetMapping("/criar")
+    @PostMapping("/criar")
     public ResponseEntity<FoodItem> criar(@RequestBody FoodItem foodItem) {
         FoodItem save = foodItemService.salvar(foodItem);
         return ResponseEntity.ok(save);
@@ -33,7 +33,7 @@ public class FoodItemController {
             return ResponseEntity.of(foodItemService.listarPorId(id));
         }
 
-        @GetMapping("/deletar/{id}")
+        @DeleteMapping("/deletar/{id}")
     public ResponseEntity<Void> deletarItem (@PathVariable Long id){
        foodItemService.deletar(id);
         return ResponseEntity.noContent().build();
