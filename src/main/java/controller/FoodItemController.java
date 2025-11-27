@@ -39,17 +39,11 @@ public class FoodItemController {
         return ResponseEntity.noContent().build();
         }
 
-
-
-
-
-
-
-
-
-        //listar por id
-        //alterar
-        //deletar
+        @PutMapping("/atualizar/{id}")
+    public ResponseEntity<FoodItem> atualizarItem(@PathVariable Long id, @RequestBody FoodItem atualizacao){
+       FoodItem atualizado = foodItemService.atualizar(id, atualizacao);
+        return ResponseEntity.ok(atualizado);
+        }
 
 
 
