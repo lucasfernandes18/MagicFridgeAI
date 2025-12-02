@@ -27,6 +27,7 @@ public class FoodItem {
     private String nome;
 
     @Column(name = "Categoria")
+    @Enumerated(EnumType.STRING) // sem essa anotação, o hibernate por padrão espera que seja armazenado um número inteiro
     private Categoria categoria;
 
     @Column(name = "quantidade")
