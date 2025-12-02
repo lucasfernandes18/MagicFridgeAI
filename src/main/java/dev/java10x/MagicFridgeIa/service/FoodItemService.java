@@ -1,17 +1,22 @@
-package service;
+package dev.java10x.MagicFridgeIa.service;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import model.FoodItem;
+import dev.java10x.MagicFridgeIa.model.FoodItem;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import repository.FoodItemRepository;
+import dev.java10x.MagicFridgeIa.repository.FoodItemRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Data
 @Service
+@RequiredArgsConstructor
+
 public class FoodItemService {
-    private FoodItemRepository repository;
+    private final FoodItemRepository repository;
 
 
     //salvar

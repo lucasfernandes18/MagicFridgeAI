@@ -1,14 +1,12 @@
-package model;
+package dev.java10x.MagicFridgeIa.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "food_item")
@@ -28,8 +26,8 @@ public class FoodItem {
     @Column(name = "nome")
     private String nome;
 
-    @Column(name = "categoria")
-    private Enum<categoria> categoria;
+    @Column(name = "Categoria")
+    private Categoria categoria;
 
     @Column(name = "quantidade")
     private Integer quantidade;

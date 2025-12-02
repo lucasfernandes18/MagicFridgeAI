@@ -1,20 +1,24 @@
-package controller;
+package dev.java10x.MagicFridgeIa.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import model.FoodItem;
+import lombok.NoArgsConstructor;
+import dev.java10x.MagicFridgeIa.model.FoodItem;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.FoodItemService;
+import dev.java10x.MagicFridgeIa.service.FoodItemService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/food")
-@Data
+@RequiredArgsConstructor // Cria construtor apenas para campos 'final'
+
+
 public class FoodItemController {
 
-    private FoodItemService foodItemService;
+    private final FoodItemService foodItemService;
 
     @PostMapping("/criar")
     public ResponseEntity<FoodItem> criar(@RequestBody FoodItem foodItem) {
