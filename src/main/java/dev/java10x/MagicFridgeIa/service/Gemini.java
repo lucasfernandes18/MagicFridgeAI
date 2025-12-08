@@ -1,6 +1,7 @@
 package dev.java10x.MagicFridgeIa.service;
 
 
+import dev.java10x.MagicFridgeIa.model.FoodItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
 * curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent" \
@@ -36,10 +38,15 @@ public class Gemini {
     private final WebClient webClient;
     @Value("${api.key}")
     private String apiKey;
+    private String alimentos;
 
 
-    public Mono<String> generateRecipe(){
-        String prompt = "me sugira uma receita simples com ingredientes comuns";
+    public Mono<String> generateRecipe(List<FoodItem> foodItemList){
+        alimentos = foodItemList.stream()
+                .map(item -> String.format("%s (%s) - Quantidade: %d, Validade: %s", item.getNome(),
+                        item.getCategoria(), item.getQuantidade(), item.getValidade()))
+                .collect(Collectors.joining("\n"));
+        String prompt = "me sugira uma receita com os seguintes itens" + alimentos;
         Map<String, Object> contentPart = Map.of("text", prompt);
         Map<String, Object> contentBlock = Map.of("parts", List.of(contentPart));
 
