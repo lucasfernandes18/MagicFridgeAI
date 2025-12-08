@@ -8,13 +8,18 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    @Value("$chatGptApi.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent")
-    private String chatGptApiUrl;
+    @Value("${GeminiApi.url:https://generativelanguage.googleapis.com}")
+    private String GeminiApi;
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
 
 
     @Bean
-    public WebClient webClient (WebClient.Builder bilder) {
-        return bilder.baseUrl(chatGptApiUrl).build();
+    public WebClient webClient (WebClient.Builder builder) {
+        return builder.baseUrl(GeminiApi).build();
     }
 
 }

@@ -19,6 +19,8 @@ public class RecipeController {
 @GetMapping("/response")
     public Mono<ResponseEntity<String>> generateRecipe(){
     return geminiService.generateRecipe()
+            .map(recipe -> ResponseEntity.ok(recipe))
+            .defaultIfEmpty(ResponseEntity.noContent().build());
 
 }
 

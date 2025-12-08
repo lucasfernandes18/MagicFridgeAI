@@ -2,6 +2,7 @@ package dev.java10x.MagicFridgeIa.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -33,7 +34,8 @@ import java.util.Map;
 public class Gemini {
 
     private final WebClient webClient;
-    private String apiKey = System.getenv("API.KEY");
+    @Value("${api.key}")
+    private String apiKey;
 
 
     public Mono<String> generateRecipe(){
