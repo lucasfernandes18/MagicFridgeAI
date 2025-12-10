@@ -17,11 +17,15 @@ import java.util.Optional;
 
 public class FoodItemService {
     private final FoodItemRepository repository;
+    private final FoodMapper foodMapper;
 
 
-    //salvar
-    public FoodItem salvar(FoodItem foodItem) {
-        return repository.save(foodItem);
+
+    //criar
+    public FoodDTO salvar(FoodDTO foodDTO) {
+        FoodItem comida = foodMapper.map(foodDTO);
+        comida = repository.save(comida);
+        return foodMapper.map(comida);
     }
 
 

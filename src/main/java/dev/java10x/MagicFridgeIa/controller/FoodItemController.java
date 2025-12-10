@@ -1,5 +1,6 @@
 package dev.java10x.MagicFridgeIa.controller;
 
+import dev.java10x.MagicFridgeIa.service.FoodDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,8 @@ public class FoodItemController {
     private final FoodItemService foodItemService;
 
     @PostMapping("/criar")
-    public ResponseEntity<FoodItem> criar(@RequestBody FoodItem foodItem) {
-        FoodItem save = foodItemService.salvar(foodItem);
+    public ResponseEntity<FoodDTO> criar(@RequestBody FoodDTO foodDTO) {
+        FoodDTO save = foodItemService.salvar(foodDTO);
         return ResponseEntity.ok(save);
     }
 
