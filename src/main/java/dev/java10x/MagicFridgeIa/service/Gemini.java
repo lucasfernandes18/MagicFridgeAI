@@ -41,7 +41,7 @@ public class Gemini {
     private String alimentos;
 
 
-    public Mono<String> generateRecipe(List<FoodItem> foodItemList){
+    public Mono<String> generateRecipe(List<FoodDTO> foodItemList){
         alimentos = foodItemList.stream()
                 .map(item -> String.format("%s (%s) - Quantidade: %d, Validade: %s", item.getNome(),
                         item.getCategoria(), item.getQuantidade(), item.getValidade()))

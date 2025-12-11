@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import dev.java10x.MagicFridgeIa.service.FoodItemService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/food")
@@ -28,14 +29,18 @@ public class FoodItemController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<FoodItem>> listar (){
-        List<FoodItem> listarComidas = foodItemService.listar();
+    public ResponseEntity<List<FoodDTO>> listar (){
+        List<FoodDTO> listarComidas = foodItemService.listar();
         return ResponseEntity.ok(listarComidas);
     }
 
         @GetMapping("/listarId/{id}")
-        public ResponseEntity<FoodItem> listarPorId(@PathVariable Long id) {
-            return ResponseEntity.of(foodItemService.listarPorId(id));
+        public ResponseEntity<FoodDTO> listarPorId(@PathVariable Long id) {
+            FoodDTO foodDTO = foodItemService.listarPorId(id);
+            if (foodDTO == null) {
+                ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(foodDTO);
         }
 
         @DeleteMapping("/deletar/{id}")
@@ -45,8 +50,8 @@ public class FoodItemController {
         }
 
         @PutMapping("/atualizar/{id}")
-    public ResponseEntity<FoodItem> atualizarItem(@PathVariable Long id, @RequestBody FoodItem atualizacao){
-       FoodItem atualizado = foodItemService.atualizar(id, atualizacao);
+    public ResponseEntity<FoodDTO> atualizarItem(@PathVariable Long id, @RequestBody FoodDTO atualizacao){
+       FoodDTO atualizado = foodItemService.atualizar(id, atualizacao);
         return ResponseEntity.ok(atualizado);
         }
 

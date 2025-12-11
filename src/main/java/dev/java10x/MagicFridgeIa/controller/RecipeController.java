@@ -1,6 +1,7 @@
 package dev.java10x.MagicFridgeIa.controller;
 
 import dev.java10x.MagicFridgeIa.model.FoodItem;
+import dev.java10x.MagicFridgeIa.service.FoodDTO;
 import dev.java10x.MagicFridgeIa.service.FoodItemService;
 import dev.java10x.MagicFridgeIa.service.Gemini;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class RecipeController {
 
 @GetMapping("/response")
     public Mono<ResponseEntity<String>> generateRecipe(){
-    List<FoodItem> foodItemList = service.listar();
+    List<FoodDTO> foodItemList = service.listar();
     return geminiService.generateRecipe(foodItemList)
             .map(recipe -> ResponseEntity.ok(recipe))
             .defaultIfEmpty(ResponseEntity.noContent().build());

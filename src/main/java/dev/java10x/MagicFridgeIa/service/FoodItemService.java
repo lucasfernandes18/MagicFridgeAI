@@ -10,6 +10,7 @@ import dev.java10x.MagicFridgeIa.repository.FoodItemRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Data
 @Service
@@ -30,14 +31,19 @@ public class FoodItemService {
 
 
     //listar
-    public List<FoodItem> listar() {
-        return repository.findAll();
+    public List<FoodDTO> listar() {
+        List<FoodItem> listaDeAlimentos = repository.findAll();
+        return listaDeAlimentos.stream()
+                .map(foodMapper::map)
+                .collect(Collectors.toList());
     }
 
 
     //listarporid
-    public Optional<FoodItem> listarPorId(Long id) {
-        return repository.findById(id);
+    public FoodDTO listarPorId(Long id) {
+        Optional<FoodItem> foodItem = repository.findById(id);
+        return foodItem.map(foodMapper::map).orElse(null);
+
     }
 
 
@@ -47,7 +53,7 @@ public class FoodItemService {
     }
 
     // atualizar
-    public FoodItem atualizar(Long id, FoodItem atualizacao) {
+    public FoodDTO atualizar(Long id, FoodDTO atualizacao) {
         Optional<FoodItem> atual = repository.findById(id);
        if (atual.isPresent()) {
             FoodItem atualOpt = atual.get();
@@ -56,7 +62,9 @@ public class FoodItemService {
             atualOpt.setCategoria(atualizacao.getCategoria());
             atualOpt.setValidade(atualizacao.getValidade());
 
-            return repository.save(atualOpt);
+
+
+            return foodMapper.map(atualOpt);
 
         }
         throw new RuntimeException("FoodItem não encontrado");
