@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciamento Integrado Moderno 🚀</title>
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #e9ecef; margin: 0; padding: 40px; }
+        .app-container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #343a40; padding: 20px 0 10px; }
+
+        /* Estilo das Abas (Tabs) */
+        .tabs { display: flex; border-bottom: 2px solid #dee2e6; }
+        .tab-button { flex: 1; padding: 15px 0; cursor: pointer; background: transparent; border: none; font-size: 1.1em; color: #495057; transition: all 0.3s; border-bottom: 3px solid transparent; }
+        .tab-button.active { color: #007bff; border-bottom: 3px solid #007bff; font-weight: bold; }
+
+        /* Conteúdo das Abas */
+        .tab-content { padding: 30px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        /* Estilos da Lista e Formulários (Geladeira) */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background-color: #f8f9fa; color: #495057; }
+        .form-inline { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+        .form-inline input, .form-inline button { padding: 10px; border-radius: 5px; border: 1px solid #ced4da; }
+        .btn-primary { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        .btn-danger { background-color: #dc3545; color: white; border: none; margin-left: 5px;}
+
+        /* Estilos do Gerador de Receitas */
+        .receitas-gerador { text-align: center; }
+        .generate-btn { padding: 15px 35px; font-size: 1.2em; background-color: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; margin-top: 20px; }
+        .receita-output { margin-top: 30px; border-left: 5px solid #28a745; padding: 20px; background-color: #f1fcf1; border-radius: 5px; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>Minha Geladeira Inteligente </h1>
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('geladeira', this)">Alimentos na Geladeira</button>
+        <button class="tab-button" onclick="showTab('receitas', this)">Gerador de Receitas</button>
+    </div>
+
+    <div class="tab-content">
+
+        <div id="geladeira" class="content-section active">
+
+            <h2>Adicionar Alimento</h2>
+            <form th:action="@{/food/criar}" th:object="${save}" method="post" class="form-inline">
+                <input type="text" th:field="*{nome}" placeholder="Nome do Alimento" required style="flex-grow: 2;"/>
+                <input type="number" th:field="*{quantidade}" placeholder="Qtd" required min="1" style="width: 60px;"/>
+                <input type="text" th:field="*{unidade}" placeholder="Unid (un/g/ml)" style="width: 100px;"/>
+                <button type="submit" class="btn-primary">Adicionar</button>
+            </form>
+
+            <h2>Lista de Itens</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantidade</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="alimento : ${alimentos}">
+                    <td th:text="${alimento.nome}">Leite</td>
+                    <td th:text="${alimento.quantidade} + ' ' + ${alimento.unidade}">1 litro</td>
+                    <td>
+                        <button class="btn-primary" onclick="alert('Editar item: ' + '[[${alimento.nome}]]')">Editar</button>
+
+                        <form th:action="@{/deletar/{id}(id=${alimento.id})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn-danger">Deletar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <p th:if="${#lists.isEmpty(alimentos)}" style="text-align: center; margin-top: 20px; color: #6c757d;">Nenhum alimento cadastrado.</p>
+
+        </div>
+
+        <div id="receitas" class="content-section">
+
+            <div class="receitas-gerador">
+                <h2>Gerar Receita Personalizada</h2>
+                <p>Encontre a melhor sugestão de prato com base no que você tem no estoque.</p>
+
+                <form th:action="@{/gerar-receita}" method="get">
+                    <button type="submit" class="generate-btn">GERAR RECEITA!</button>
+                </form>
+
+                <div th:if="${receitaGerada != null}" class="receita-output">
+                    <h3>Prato Sugerido:</h3>
+                    <p th:utext="${receitaGerada}">
+                        **Mock de Receita:** Omelete Rápida.<br/>
+                        **Ingredientes:** Ovos (do estoque), Queijo (se disponível).<br/>
+                        **Instruções:** Bata, frite e sirva.
+                    </p>
+                </div>
+                <div th:unless="${receitaGerada != null}">
+                    <div class="receita-output" style="border-left-color: #6c757d; background-color: #f8f9fa;">
+                        <p>Sua sugestão de receita aparecerá aqui após clicar no botão.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function showTab(tabId, clickedButton) {
+        // Esconder todos os conteúdos
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        // Remover 'active' de todos os botões
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+
+        // Mostrar o conteúdo da aba clicada
+        document.getElementById(tabId).classList.add('active');
+        // Ativar o botão clicado
+        clickedButton.classList.add('active');
+    }
+
+    // Se a página for recarregada pelo backend após uma ação (como gerar receita),
+    // precisamos garantir que a aba correta permaneça ativa.
+    // O Thymeleaf pode injetar qual aba deve estar ativa.
+    // Exemplo: se houver uma variável 'abaAtiva' no modelo do Spring:
+    const initialTab = '[[${abaAtiva}]]' || 'geladeira'; // Assume 'geladeira' como padrão
+    document.addEventListener('DOMContentLoaded', () => {
+        const button = document.querySelector(`.tab-button[onclick*="'${initialTab}'"]`);
+        if (button) {
+            showTab(initialTab, button);
+        }
+    });
+</script>
+
+</body>
+</html>
