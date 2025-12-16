@@ -1,103 +1,106 @@
 package dev.java10x.MagicFridgeIa.controller;
 
-import dev.java10x.MagicFridgeIa.model.FoodItem;
 import dev.java10x.MagicFridgeIa.service.FoodDTO;
 import dev.java10x.MagicFridgeIa.service.FoodItemService;
 import lombok.RequiredArgsConstructor;
-import org.bouncycastle.math.raw.Mod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/food/ui")
-
 public class FoodItemControllerUI {
 
     private final FoodItemService foodItemService;
 
-    public void Home(){}
+    // 1. O Principal: Carrega o Painel, a Lista e o Formulário Vazio
+    @GetMapping("/painel")
+    public String exibirPainel(Model model) {
+        // Busca a lista no banco
+        List<FoodDTO> lista = foodItemService.listar();
+        model.addAttribute("alimentos", lista); // Variável usada na tabela do HTML
 
+        // Cria o objeto vazio para o formulário de "Adicionar"
+        model.addAttribute("save", new FoodDTO());
 
-    @GetMapping("/criar")
-    public String criar (FoodDTO foodDTO, Model model){
-        FoodDTO criarComida = foodItemService.salvar(foodDTO);
-        model.addAttribute("criarComida", criarComida);
-        return "criarComida";
+        // Define a aba inicial
+        model.addAttribute("abaAtiva", "geladeira");
+
+        // Retorna o NOME EXATO do seu arquivo HTML (sem .html)
+        return "Painel_geladeira";
     }
 
-    @GetMapping("/listar")
-    public String listar(Model model) {
-        List<FoodDTO> listaDeAimentos = foodItemService.listar();
-        model.addAttribute("listaDeAimentos", listaDeAimentos);
-        return "listaDeAimentos";
-    }
-
-    @GetMapping("/listarId")
-    public String listarPorId (@PathVariable Long id, Model model){
-        FoodDTO informacoesDaComida = foodItemService.listarPorId(id);
-        model.addAttribute("informacoesDaComida", informacoesDaComida);
-        return "informacoesDaComida";
-    }
-
-    @GetMapping("/deletar")
-    public String deletar(@PathVariable Long id, Model model){
-        FoodDTO deletar = foodItemService.listarPorId(id);
-        return "redirect:/food/ui/home";
-    }
-
-    @GetMapping("/atualizar")
-    public String atualizar (@PathVariable Long id, FoodDTO atualizacao, Model model){
-        FoodDTO modificar = foodItemService.atualizar(id, atualizacao);
-        model.addAttribute("modificar", modificar);
-        return "modificar";
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////
-
-
+    // 2. Ação de Criar (Vinda do formulário HTML)
+    // O HTML usa method="post" em th:action="@{/food/ui/criar}"
     @PostMapping("/criar")
-    public ResponseEntity<FoodDTO> criar(@RequestBody FoodDTO foodDTO) {
+    public String criarViaFormulario(@ModelAttribute("save") FoodDTO foodDTO) {
+        foodItemService.salvar(foodDTO);
+        // Após salvar, recarrega a página do painel para mostrar o novo item
+        return "redirect:/food/ui/painel";
+    }
+
+    // 3. Ação de Deletar (Vinda do botão HTML)
+    // O HTML usa method="post" em th:action="@{/food/ui/deletar/{id}}"
+    @PostMapping("/deletar/{id}")
+    public String deletarViaFormulario(@PathVariable Long id) {
+        foodItemService.deletar(id);
+        // Após deletar, recarrega a página
+        return "redirect:/food/ui/painel";
+    }
+
+    // 4. Ação de Gerar Receita (Aba de Receitas)
+    @GetMapping("/gerar-receita")
+    public String gerarReceita(Model model) {
+        // Lógica simulada
+        String receita = "<h3>Sugestão do Dia</h3><p>Com base nos seus itens: Omelete de Forno.</p>";
+
+        // Precisamos recarregar os dados do painel pois estamos retornando para a mesma view
+        model.addAttribute("alimentos", foodItemService.listar());
+        model.addAttribute("save", new FoodDTO());
+
+        model.addAttribute("receitaGerada", receita);
+        model.addAttribute("abaAtiva", "receitas"); // Mantém a aba de receitas aberta
+
+        return "Painel_geladeira";
+    }
+
+    // =================================================================================
+    //  PARTE 2: MÉTODOS REST / API (JSON)
+    //  OBS: Renomeei as rotas adicionando "_api" para não dar conflito com a UI acima.
+    // =================================================================================
+
+    @PostMapping("/api/criar")
+    public ResponseEntity<FoodDTO> criarApi(@RequestBody FoodDTO foodDTO) {
         FoodDTO save = foodItemService.salvar(foodDTO);
         return ResponseEntity.ok(save);
     }
 
-    @GetMapping("/listar")
-    public ResponseEntity<List<FoodDTO>> listar(){
+    @GetMapping("/api/listar")
+    public ResponseEntity<List<FoodDTO>> listarApi(){
         List<FoodDTO> listarComidas = foodItemService.listar();
         return ResponseEntity.ok(listarComidas);
     }
 
-    @GetMapping("/listarId/{id}")
-    public ResponseEntity<FoodDTO> listarPorId(@PathVariable Long id) {
+    @GetMapping("/api/listarId/{id}")
+    public ResponseEntity<FoodDTO> listarPorIdApi(@PathVariable Long id) {
         FoodDTO foodDTO = foodItemService.listarPorId(id);
-        if (foodDTO == null) {
-            ResponseEntity.notFound().build();
-        }
+        if (foodDTO == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(foodDTO);
     }
 
-    @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<Void> deletarItem (@PathVariable Long id){
+    @DeleteMapping("/api/deletar/{id}")
+    public ResponseEntity<Void> deletarItemApi (@PathVariable Long id){
         foodItemService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/atualizar/{id}")
-    public ResponseEntity<FoodDTO> atualizarItem(@PathVariable Long id, @RequestBody FoodDTO atualizacao){
+    @PutMapping("/api/atualizar/{id}")
+    public ResponseEntity<FoodDTO> atualizarItemApi(@PathVariable Long id, @RequestBody FoodDTO atualizacao){
         FoodDTO atualizado = foodItemService.atualizar(id, atualizacao);
         return ResponseEntity.ok(atualizado);
     }
-
-
-
-
-
-
 }

@@ -14,13 +14,32 @@ import java.util.stream.Collectors;
 
 @Data
 @Service
-@RequiredArgsConstructor
+
 
 public class FoodItemService {
-    private final FoodItemRepository repository;
-    private final FoodMapper foodMapper;
+    private  FoodItemRepository repository;
+    private  FoodMapper foodMapper;
 
+    public FoodItemService(FoodItemRepository repository, FoodMapper foodMapper) {
+        this.repository = repository;
+        this.foodMapper = foodMapper;
+    }
 
+    public FoodItemRepository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(FoodItemRepository repository) {
+        this.repository = repository;
+    }
+
+    public FoodMapper getFoodMapper() {
+        return foodMapper;
+    }
+
+    public void setFoodMapper(FoodMapper foodMapper) {
+        this.foodMapper = foodMapper;
+    }
 
     //criar
     public FoodDTO salvar(FoodDTO foodDTO) {
@@ -61,7 +80,7 @@ public class FoodItemService {
             atualOpt.setQuantidade(atualizacao.getQuantidade());
             atualOpt.setCategoria(atualizacao.getCategoria());
             atualOpt.setValidade(atualizacao.getValidade());
-
+           atualOpt.setUnidade(atualizacao.getUnidade());
 
 
             return foodMapper.map(atualOpt);

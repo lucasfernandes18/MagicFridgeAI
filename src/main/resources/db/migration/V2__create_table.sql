@@ -1,0 +1,2 @@
+ALTER TABLE food_item
+ADD COLUMN unidade VARCHAR(50);

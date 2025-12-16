@@ -35,4 +35,7 @@ public class FoodItem {
 
     @Column(name = "validade")
     private LocalDate validade;
+
+    @Column(name = "unidade")
+    private String unidade;
 }

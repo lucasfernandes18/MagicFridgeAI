@@ -17,6 +17,7 @@ public class FoodDTO {
     private Categoria categoria;
     private Integer quantidade;
     private LocalDate validade;
+    private String unidade;
 
 
 }
